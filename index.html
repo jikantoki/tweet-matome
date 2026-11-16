@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>X (Twitter) 時系列まとめジェネレーター</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>X (Twitter) 時系列まとめジェネレーター</h1>
+
+      <div class="grid">
+        <!-- 左カラム: 入力フォーム -->
+        <div class="card">
+          <form id="generatorForm">
+            <label for="urls" class="form-label">
+              ツイートのURLを貼り付け（1行に1つ）
+            </label>
+            <div id="errorBox" class="error hidden"></div>
+            <textarea
+              id="urls"
+              class="url-input"
+              placeholder="https://x.com/jack/status/20&#10;https://twitter.com/elonmusk/status/1585841080431321088&#10;..."
+            ></textarea>
+
+            <div class="controls">
+              <div>
+                <label for="sort" class="sort-label">並び順:</label>
+                <select id="sort">
+                  <option value="asc">古い順（時系列）</option>
+                  <option value="desc">新しい順（逆時系列）</option>
+                </select>
+              </div>
+              <button type="submit" class="btn-primary" id="submitBtn">
+                まとめを生成する
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- 右カラム: 成果物表示 -->
+        <div class="card">
+          <div id="emptyState" class="empty-state">
+            左側のフォームにツイートのURLを貼り付けて<br />「まとめを生成する」を押すと、ここに結果が表示されます。
+          </div>
+
+          <div id="resultContainer" class="hidden">
+            <div class="tabs">
+              <button type="button" class="tab-btn active" data-tab="preview">
+                プレビュー (<span id="tweetCount">0</span>件)
+              </button>
+              <button type="button" class="tab-btn" data-tab="html">
+                HTMLソース
+              </button>
+              <button type="button" class="tab-btn" data-tab="json">
+                JSONデータ
+              </button>
+            </div>
+
+            <!-- タブ1: プレビュー -->
+            <div id="tab-preview" class="tab-content active">
+              <div id="previewBox" class="preview-box"></div>
+            </div>
+
+            <!-- タブ2: HTMLソース -->
+            <div id="tab-html" class="tab-content">
+              <div class="code-actions">
+                <button
+                  type="button"
+                  class="btn-secondary"
+                  data-copy="htmlCode"
+                >
+                  コピー
+                </button>
+                <button
+                  type="button"
+                  class="btn-secondary"
+                  data-download="htmlCode"
+                  data-filename="tweets_timeline.html"
+                  data-mime="text/html"
+                >
+                  .html をダウンロード
+                </button>
+              </div>
+              <textarea id="htmlCode" class="code-output" readonly></textarea>
+            </div>
+
+            <!-- タブ3: JSONデータ -->
+            <div id="tab-json" class="tab-content">
+              <div class="code-actions">
+                <button
+                  type="button"
+                  class="btn-secondary"
+                  data-copy="jsonCode"
+                >
+                  コピー
+                </button>
+                <button
+                  type="button"
+                  class="btn-secondary"
+                  data-download="jsonCode"
+                  data-filename="tweets_timeline.json"
+                  data-mime="application/json"
+                >
+                  .json をダウンロード
+                </button>
+              </div>
+              <textarea id="jsonCode" class="code-output" readonly></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- X公式埋め込みスクリプト -->
+    <script
+      async
+      src="https://platform.twitter.com/widgets.js"
+      charset="utf-8"
+    ></script>
+    <script src="javascript.js"></script>
+  </body>
+</html>
