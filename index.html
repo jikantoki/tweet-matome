@@ -5,10 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>X (Twitter) 時系列まとめジェネレーター</title>
     <link rel="stylesheet" href="style.css" />
+    <meta ogp:title="X (Twitter) 時系列まとめジェネレーター" />
+    <meta
+      ogp:description="X (Twitter) のツイートURLを貼り付けるだけで、時系列にまとめたHTMLを生成するツールです。"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="./icon.jpg" />
   </head>
   <body>
     <div class="container">
-      <h1>X (Twitter) 時系列まとめジェネレーター</h1>
+      <h1>
+        <img
+          src="./icon.jpg"
+          alt="X (Twitter) 時系列まとめジェネレーター"
+          style="height: 1em; margin-right: 0.5em; border-radius: 9999px"
+        />X (Twitter) 時系列まとめジェネレーター
+      </h1>
 
       <div class="grid">
         <!-- 左カラム: 入力フォーム -->
@@ -47,8 +59,15 @@
 
           <div id="resultContainer" class="hidden">
             <div class="tabs">
-              <button type="button" class="tab-btn active" data-tab="preview">
-                プレビュー (<span id="tweetCount">0</span>件)
+              <button
+                type="button"
+                class="tab-btn active"
+                data-tab="twitter-preview"
+              >
+                Twitterプレビュー (<span id="tweetCount">0</span>件)
+              </button>
+              <button type="button" class="tab-btn" data-tab="html-preview">
+                HTMLプレビュー
               </button>
               <button type="button" class="tab-btn" data-tab="html">
                 HTMLソース
@@ -58,12 +77,42 @@
               </button>
             </div>
 
-            <!-- タブ1: プレビュー -->
-            <div id="tab-preview" class="tab-content active">
-              <div id="previewBox" class="preview-box"></div>
+            <!-- タブ1: Twitterプレビュー -->
+            <div id="tab-twitter-preview" class="tab-content active">
+              <div class="preview-header">
+                <span class="preview-desc"
+                  >X (Twitter) 公式ウィジェットによる表示です。</span
+                >
+              </div>
+              <div id="twitterPreviewBox" class="preview-box"></div>
             </div>
 
-            <!-- タブ2: HTMLソース -->
+            <!-- タブ2: HTMLプレビュー -->
+            <div id="tab-html-preview" class="tab-content">
+              <div class="code-actions preview-actions">
+                <label class="toggle-label">
+                  <input type="checkbox" id="htmlPreviewWidgetToggle" checked />
+                  <span>Twitterウィジェットを適用</span>
+                </label>
+                <button
+                  type="button"
+                  class="btn-secondary"
+                  id="openHtmlTabBtn"
+                  title="生成されたHTMLを新しいタブで開いて確認します"
+                >
+                  別タブで開く
+                </button>
+              </div>
+              <div class="iframe-container">
+                <iframe
+                  id="htmlPreviewIframe"
+                  class="html-preview-iframe"
+                  title="HTMLプレビュー"
+                ></iframe>
+              </div>
+            </div>
+
+            <!-- タブ3: HTMLソース -->
             <div id="tab-html" class="tab-content">
               <div class="code-actions">
                 <button
@@ -86,7 +135,7 @@
               <textarea id="htmlCode" class="code-output" readonly></textarea>
             </div>
 
-            <!-- タブ3: JSONデータ -->
+            <!-- タブ4: JSONデータ -->
             <div id="tab-json" class="tab-content">
               <div class="code-actions">
                 <button
@@ -111,6 +160,22 @@
           </div>
         </div>
       </div>
+      <footer>
+        <p>
+          © 2019
+          <a href="https://enoki.xyz" target="_blank" rel="noopener noreferrer"
+            >エノキ電気</a
+          >
+          |
+          <a
+            href="https://github.com/jikantoki/tweet-matome"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            GitHub
+          </a>
+        </p>
+      </footer>
     </div>
 
     <!-- X公式埋め込みスクリプト -->
