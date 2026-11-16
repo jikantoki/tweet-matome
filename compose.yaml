@@ -1,0 +1,8 @@
+services:
+  tweet-generator:
+    build: .
+    image: tweet-generator:latest
+    container_name: tweet-generator
+    ports:
+      - '16868:80'
+    restart: unless-stopped
