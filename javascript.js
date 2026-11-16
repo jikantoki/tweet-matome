@@ -20,8 +20,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const tabBtns = document.querySelectorAll('.tab-btn')
   const tabContents = document.querySelectorAll('.tab-content')
 
-  // デフォルトのアバター画像（SVG Data URL）
-  const DEFAULT_AVATAR = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%238899a6"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>`
+  // デフォルトのアバター画像（HTML属性破壊を防ぐBase64形式のSVG Data URL）
+  const DEFAULT_AVATAR =
+    'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzg4OTlhNiI+PHBhdGggZD0iTTEyIDEyYzIuMjEgMCA0LTEuNzkgNC00cy0xLjc5LTQtNC00LTQgMS43OS00IDQgMS43OSA0IDQgNHptMCAyYy0yLjY3IDAtOCAxLjM0LTggNHYyaDE2di0yYzAtMi42Ni01LjMzLTQtOC00eiIvPjwvc3ZnPg=='
 
   // 現在の生成結果データ
   let currentResults = []
@@ -329,7 +330,7 @@ ${itemsHtml}
         <header class="tweet-header">
             <div class="tweet-author-wrapper">
                 <a href="${authorUrl}" target="_blank" rel="noopener noreferrer" class="tweet-avatar-link">
-                    <img src="${avatarUrl}" alt="${authorName}" class="tweet-avatar" loading="lazy" onerror="this.src='${DEFAULT_AVATAR}'" />
+                    <img src="${avatarUrl}" alt="${authorName}" class="tweet-avatar" loading="lazy" onerror="this.onerror=null;this.src='${DEFAULT_AVATAR}'" />
                 </a>
                 <div class="tweet-author-info">
                     <a href="${authorUrl}" target="_blank" rel="noopener noreferrer" class="tweet-author-name">${authorName}</a>
