@@ -11,13 +11,14 @@ Webブラウザ上のUIだけでなく、バックエンドの `api.php` に直�
 ## 🌟 特徴
 
 - **正確な時系列ソート**: XのツイートID（Snowflake ID）を解析し、投稿タイムスタンプ（秒・ミリ秒）を逆算。APIの制限を受けずにミリ秒単位で正確な時系列（昇順／降順）に並び替えます。
-- **リッチな埋め込みとメトリクス取得**:
-  - X公式の `oEmbed` API により、オフィシャルな埋め込み用ブロック引用タグ (`<blockquote>`) を生成。
-  - 公開Syndication APIにより、いいね数・リツイート数・返信数・引用数および本文プレーンテキストを取得。
+- **リッチな自前レンダリングとメトリクス取得**:
+  - Twitter公式の重いウィジェット画面を使わず、自前の軽量・モダンなHTML/CSSで投稿者名、アイコン、ツイート本文、リンク展開、いいね数・リツイート数を高速レンダリング。
+  - 本文中の `pic.twitter.com` や `pic.x.com` から始まるURLを自動解決し、高画質な画像として取得・表示（1〜4枚のレスポンシブグリッド対応）。
+  - FixTweet API、Syndication API、公式oEmbed APIによる多重フォールバックで安定したデータ取得。
 - **多彩な出力形式**:
-  - **Twitterプレビュー**: 公式ウィジェットを読み込み、実際のツイート表示を確認。
-  - **HTMLプレビュー**: 生成される単体HTMLのプレビュー（TwitterウィジェットON/OFF切り替え可能、別タブ展開対応）。
-  - **HTMLソース**: コピー＆ダウンロード（`.html`）対応。ブログや静的サイトにそのまま貼り付け可能。
+  - **Twitterプレビュー**: 公式ウィジェットを読み込み、公式の表示を確認。
+  - **HTMLプレビュー**: Twitter側の画面を使わず自前デザインで描画した高速・軽量プレビュー（別タブ展開対応）。
+  - **HTMLソース**: 外部スクリプトに依存しない完全スタンドアロンなHTMLコード。コピー＆ダウンロード（`.html`）対応。
   - **JSONデータ**: コピー＆ダウンロード（`.json`）対応。他システムとの連携が容易。
 - **APIモード対応**: `api.php` へ直接POSTリクエストを送ることで、Python・Node.js・シェルスクリプトなど外部からヘッドレスでツイート情報を取得可能。
 - **Docker対応**: Docker / Docker Compose ですぐにコンテナを起動できます。
@@ -129,21 +130,25 @@ php -S localhost:8000
 
 ##### `results` 配列内の各オブジェクト項目
 
-| フィールド      | 型             | 説明                                                             |
-| :-------------- | :------------- | :--------------------------------------------------------------- |
-| `id`            | string         | ツイートのID（Snowflake ID）                                     |
-| `url`           | string         | 正規化されたツイートURL (`https://x.com/{username}/status/{id}`) |
-| `created_at`    | string         | 投稿日時 (`Y-m-d H:i:s` 形式)                                    |
-| `timestamp`     | int            | 投稿日時のUnixタイムスタンプ（秒）                               |
-| `author_name`   | string         | 投稿者の表示名（取得失敗時は `@ユーザー名`）                     |
-| `author_url`    | string         | 投稿者のプロフィールURL                                          |
-| `like_count`    | int \| null    | いいね（お気に入り）数                                           |
-| `retweet_count` | int \| null    | リツイート数                                                     |
-| `reply_count`   | int \| null    | 返信（リプライ）数                                               |
-| `quote_count`   | int \| null    | 引用ツイート数                                                   |
-| `text`          | string \| null | ツイート本文のプレーンテキスト                                   |
-| `html`          | string         | 埋め込み用HTML (`blockquote.twitter-tweet` タグ)                 |
-| `fetch_status`  | string         | oEmbedの取得結果。成功時は `"ok"`、失敗時はエラーメッセージ      |
+| フィールド        | 型             | 説明                                                                     |
+| :---------------- | :------------- | :----------------------------------------------------------------------- |
+| `id`              | string         | ツイートのID（Snowflake ID）                                             |
+| `url`             | string         | 正規化されたツイートURL (`https://x.com/{username}/status/{id}`)         |
+| `created_at`      | string         | 投稿日時 (`Y-m-d H:i:s` 形式)                                            |
+| `timestamp`       | int            | 投稿日時のUnixタイムスタンプ（秒）                                       |
+| `author_name`     | string         | 投稿者の表示名                                                           |
+| `author_username` | string         | 投稿者のアカウント名（スクリーンネーム）                                 |
+| `author_url`      | string         | 投稿者のプロフィールURL                                                  |
+| `author_avatar`   | string \| null | 投稿者のアバター画像URL（高解像度）                                      |
+| `like_count`      | int \| null    | いいね（お気に入り）数                                                   |
+| `retweet_count`   | int \| null    | リツイート数                                                             |
+| `reply_count`     | int \| null    | 返信（リプライ）数                                                       |
+| `quote_count`     | int \| null    | 引用ツイート数                                                           |
+| `text`            | string \| null | ツイート本文のプレーンテキスト                                           |
+| `photos`          | array          | 添付画像オブジェクト配列 (`[{ url, width, height, alt }]`)               |
+| `urls`            | array          | 展開されたリンク情報配列 (`[{ url, expanded_url, display_url }]`)         |
+| `html`            | string         | 埋め込み用HTML (`blockquote.twitter-tweet` タグ、公式ウィジェット用)     |
+| `fetch_status`    | string         | 取得結果。成功時は `"ok"`、失敗時はエラーメッセージ                      |
 
 #### エラー時
 
